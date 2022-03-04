@@ -152,7 +152,7 @@ namespace BasicServerHTTPlistener
                 // Obtain a response object.
                 HttpListenerResponse response = context.Response;
 
-                requestHandler(context, request);
+                requestHandler(context, request); //HERE THE CALL IS DONE
 
                 callExternaProgram(request);
             }
@@ -171,9 +171,11 @@ namespace BasicServerHTTPlistener
 
             string responseString = "";
 
-                Type thisType = myMethods.GetType();
-                MethodInfo method = thisType.GetMethod("method2");
-                responseString = (string)method.Invoke(myMethods, null);
+            Type thisType = myMethods.GetType();
+            MethodInfo method = thisType.GetMethod("method2");
+            var paramss = new object[2];
+            paramss[0] = request;
+            responseString = (string)method.Invoke(myMethods, new[] {paramss});
             
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
