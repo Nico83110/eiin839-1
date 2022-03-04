@@ -32,7 +32,7 @@ namespace BasicServerHTTPlistener
 
     internal class Program
     {
-        private static async void Main(string[] args)
+        private static void Main(string[] args)
         {
 
             //if HttpListener is not supported by the Framework
@@ -153,6 +153,8 @@ namespace BasicServerHTTPlistener
                 HttpListenerResponse response = context.Response;
 
                 requestHandler(context, request);
+
+                callExternaProgram(request);
             }
             // Httplistener neither stop ... But Ctrl-C do that ...
             // listener.Stop();
@@ -178,6 +180,24 @@ namespace BasicServerHTTPlistener
             System.IO.Stream output = response.OutputStream;
             output.Write(buffer, 0, buffer.Length);
             output.Close();
+        }
+
+        public static string callExternaProgram(HttpListenerRequest request)
+        {
+            Process p = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = @"cmd.exe";
+            startInfo.Arguments = @"/K echo " + HttpUtility.ParseQueryString(request.Url.Query).Get("param1");
+            p.StartInfo = startInfo;
+            p.Start();
+            return "<HTML><body> <h1>Execution of Windows cmd program :</h1><br>"
+                + HttpUtility.ParseQueryString(request.Url.Query).Get("param1") + "<br>"
+                + "</body></HTML>";
+        }
+
+        public static int incr(int val1)
+        {
+            return val1 + 1;
         }
     }
 
