@@ -23,10 +23,22 @@ namespace BasicServerHTTPlistener
         }
 
 
-        public string callExternalApp(string var1, string var2)
+        public string method3(object[] uriParams)
         {
-            Process.Start("C:\\");
-            return "";
+            HttpListenerRequest request = (HttpListenerRequest)uriParams[0];
+            string responseString = "<HTML><BODY>here are the parameters";
+            responseString += "<p> Parameter 1 is ";
+            responseString += HttpUtility.ParseQueryString(request.Url.Query).Get("param1") + "</p>";
+            responseString += "<p> Parameter 2 is ";
+            responseString += HttpUtility.ParseQueryString(request.Url.Query).Get("param2") + "</p>";
+            responseString += "<p> Parameter 3 is ";
+            responseString += HttpUtility.ParseQueryString(request.Url.Query).Get("param3") + "</p>";
+            responseString += "<p> Parameter 4 is ";
+            responseString += HttpUtility.ParseQueryString(request.Url.Query).Get("param4") + "</p>";
+
+            responseString += " </BODY></HTML>";
+
+            return responseString;
         }
     }
 
@@ -172,10 +184,10 @@ namespace BasicServerHTTPlistener
             string responseString = "";
 
             Type thisType = myMethods.GetType();
-            MethodInfo method = thisType.GetMethod("method2");
+            MethodInfo method = thisType.GetMethod("method3");
             var paramss = new object[2];
             paramss[0] = request;
-            responseString = (string)method.Invoke(myMethods, new[] {paramss});
+            responseString = (string)method.Invoke(myMethods, new[] {paramss}); //erreur impossible de cast System.Object en System.String...
             
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
